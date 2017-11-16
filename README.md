@@ -6,6 +6,7 @@ Just playing around with Lahman and wondered who the all-time career wOBA leader
 After running the script, we can see that Babe Ruth and Ted Williams are the career leaders in a stat
 that wasn't created until decades after they retired:
 
+
   wOBAs.playerID wOBAs.nameFirst wOBAs.nameLast wOBAs.wOBA
 1       ruthba01            Babe           Ruth  0.4918795
 2      willite01             Ted       Williams  0.4749515
