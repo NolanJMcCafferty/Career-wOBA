@@ -1,0 +1,29 @@
+library(Lahman)
+library(plyr)
+
+dataframe.AB <- ddply(Batting, .(playerID), summarize, Career.AB=sum(AB, na.rm=TRUE))
+Batting <- merge(Batting, dataframe.AB, by="playerID")
+ABs.5000 <- subset(Batting, Career.AB >= 5000)
+
+calcwOBA <- function(b) {
+  c.AB <- sum(b$AB, na.rm=TRUE)
+  c.BB <- sum(b$BB, na.rm=TRUE)
+  c.IBB <- sum(b$IBB, na.rm=TRUE)
+  c.HBP <- sum(b$HBP, na.rm=TRUE)
+  c.H <- sum(b$H, na.rm=TRUE)
+  c.X2B <- sum(b$X2B, na.rm=TRUE)
+  c.X3B <- sum(b$X3B, na.rm=TRUE)
+  c.HR <- sum(b$HR, na.rm=TRUE)
+  c.SF <- sum(b$SF, na.rm=TRUE)
+  
+  c.wOBA <- ((.69*(c.BB-c.IBB)+.72*c.HBP+.89*(c.H-c.X2B-c.X3B-c.HR)+1.27*c.X2B+1.62*c.X3B +2.1*c.HR)/
+               (c.AB + c.BB - c.IBB + c.SF + c.HBP))
+  data.frame(wOBA=c.wOBA)
+}
+
+wOBAs <- ddply(ABs.5000, .(playerID), calcwOBA)
+wOBAs <- merge(Master, wOBAs, by="playerID")
+wOBAs <- wOBAs[order(wOBAs$wOBA, decreasing=TRUE),]
+wOBAs <- data.frame(wOBAs$playerID, wOBAs$nameFirst, wOBAs$nameLast, wOBAs$wOBA)
+
+head(wOBAs)
